@@ -20,27 +20,25 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeIn),
     );
     _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+      CurvedAnimation(parent: _controller, curve: Curves.elasticOut),
     );
     _controller.forward();
     
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkAndNavigate();
+    Future.delayed(const Duration(milliseconds: 2000), () {
+      if (mounted) {
+        _checkAndNavigate();
+      }
     });
   }
 
   Future<void> _checkAndNavigate() async {
-    await Future.delayed(const Duration(milliseconds: 1500));
-    
-    if (!mounted) return;
-    
     try {
       final prefs = await SharedPreferences.getInstance();
       final isFirstRun = prefs.getBool('first_run') ?? true;
@@ -54,7 +52,7 @@ class _SplashScreenState extends State<SplashScreen>
         nextScreen = const MainNavigation();
       }
       
-      if (mounted) {
+      if (mounted && context.mounted) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => nextScreen),
         );
@@ -76,15 +74,6 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 600;
-    final isTablet = screenWidth >= 600 && screenWidth < 900;
-    final isDesktop = screenWidth >= 900;
-    
-    final logoSize = isDesktop ? 150.0 : (isTablet ? 120.0 : 100.0);
-    final fontSize = isDesktop ? 42.0 : (isTablet ? 32.0 : 24.0);
-    final subtitleSize = isDesktop ? 18.0 : (isTablet ? 14.0 : 12.0);
-
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       body: Center(
@@ -96,47 +85,40 @@ class _SplashScreenState extends State<SplashScreen>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  width: logoSize,
-                  height: logoSize,
+                  width: 100,
+                  height: 100,
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(logoSize * 0.25),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
+                    borderRadius: BorderRadius.circular(25),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.note_alt,
-                    size: logoSize * 0.5,
+                    size: 50,
                     color: Colors.teal,
                   ),
                 ),
-                SizedBox(height: isDesktop ? 36 : 24),
-                Text(
+                const SizedBox(height: 24),
+                const Text(
                   'Notebook Pro',
                   style: TextStyle(
-                    fontSize: fontSize,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(height: isDesktop ? 12 : 8),
-                Text(
-                  'Notes • Tasks • Documents • Vault',
+                const SizedBox(height: 8),
+                const Text(
+                  'Notes • Tasks • Documents',
                   style: TextStyle(
-                    fontSize: subtitleSize,
-                    color: Colors.white.withValues(alpha: 0.8),
+                    fontSize: 12,
+                    color: Colors.white70,
                   ),
                 ),
-                SizedBox(height: isDesktop ? 72 : 48),
-                SizedBox(
-                  width: isMobile ? 24 : 32,
-                  height: isMobile ? 24 : 32,
-                  child: const CircularProgressIndicator(
+                const SizedBox(height: 48),
+                const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     strokeWidth: 2,
                   ),

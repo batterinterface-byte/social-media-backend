@@ -43,3 +43,13 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Download files
+*.apk
+*.zip
+*.tar.gz
+
+# Server files
+serve.dart
+server.dart
+upload_to_drive.py

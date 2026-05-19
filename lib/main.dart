@@ -10,6 +10,8 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
   
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  
   runApp(const NotebookApp());
 }
 
